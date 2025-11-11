@@ -1,3 +1,7 @@
+use unitconv::run;
+
 fn main() {
-    println!("Hello, world!");
+    if let Err(e) = run() {
+        eprintln!("{}", e);
+    }
 }
