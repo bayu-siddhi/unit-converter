@@ -1,12 +1,19 @@
+//! # Units Definition Module
+//!
+//! This module defines all the supported units, their properties, and related utilities.
+//! It includes enums for `Unit`, `UnitDimension`, and helpers for parsing and displaying them.
+
 use anyhow::{Result, bail};
 use std::fmt::{Display, Formatter};
 
+/// Differentiates between a source unit and a target unit
 pub enum UnitType {
     Source,
     Target,
 }
 
 impl Display for UnitType {
+    /// Formats the enum into a capitalized string representation ("Source" or "Target").
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             UnitType::Source => write!(f, "Source"),
@@ -15,6 +22,7 @@ impl Display for UnitType {
     }
 }
 
+/// Dimension category of a unit.
 #[derive(PartialEq)]
 pub enum UnitDimension {
     Temperature,
@@ -22,6 +30,7 @@ pub enum UnitDimension {
 }
 
 impl Display for UnitDimension {
+    /// Formats the enum into a lowercase string representation ("temperature" or "length").
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             UnitDimension::Temperature => write!(f, "temperature"),
@@ -30,6 +39,7 @@ impl Display for UnitDimension {
     }
 }
 
+/// All supported conversion units.
 #[derive(Clone, PartialEq)]
 pub enum Unit {
     Celsius,
@@ -42,6 +52,7 @@ pub enum Unit {
 }
 
 impl Display for Unit {
+    /// Formats the unit enum into its lowercase string representation (e.g., "celsius", "km").
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
             Unit::Celsius => write!(f, "celsius"),
@@ -56,6 +67,15 @@ impl Display for Unit {
 }
 
 impl Unit {
+    /// Gets the physical dimension of the unit.
+    ///
+    /// This method returns the `UnitDimension` (e.g., `Temperature` or `Length`) for the
+    /// given `Unit` instance.
+    ///
+    /// ## Returns
+    ///
+    /// A `UnitDimension` enum variant corresponding to the unit's category.
+    ///
     pub fn dimension(&self) -> UnitDimension {
         match self {
             Unit::Celsius | Unit::Fahrenheit | Unit::Kelvin => UnitDimension::Temperature,
@@ -63,6 +83,15 @@ impl Unit {
         }
     }
 
+    /// Gets the common symbol for the unit.
+    ///
+    /// This method returns a string containing the standard symbol for the unit,
+    /// such as "°C" for Celsius or "km" for Kilometer.
+    ///
+    /// ## Returns
+    ///
+    /// A `String` representing the unit's symbol.
+    ///
     pub fn symbol(&self) -> String {
         match self {
             Unit::Celsius => return String::from("°C"),
@@ -75,6 +104,15 @@ impl Unit {
         }
     }
 
+    /// Provides a list of all supported `Unit` variants.
+    ///
+    /// This static method returns a fixed-size array containing one instance of every
+    /// unit defined in the `Unit` enum.
+    ///
+    /// ## Returns
+    ///
+    /// An array of all `Unit` variants.
+    ///
     pub fn all_units() -> [Unit; 7] {
         [
             Unit::Celsius,
@@ -87,6 +125,11 @@ impl Unit {
         ]
     }
 
+    /// Prints a formatted list of all supported units to the console.
+    ///
+    /// This static method iterates over all available units, printing each one's name
+    /// and dimension in a human-readable, numbered list to standard output.
+    ///
     pub fn print() {
         println!("Supported units:");
         for (i, unit) in Self::all_units().iter().enumerate() {
@@ -95,6 +138,21 @@ impl Unit {
     }
 }
 
+/// Parses a string into a `Unit` enum.
+///
+/// The matching is case-insensitive. If the string does not match any known unit,
+/// an error is returned.
+///
+/// ## Arguments
+///
+/// * `unit` - The `String` to parse.
+/// * `unit_type` - The `UnitType` (Source/Target) for creating a specific error message.
+///
+/// ## Returns
+///
+/// An `anyhow::Result<Unit>` containing the corresponding `Unit` variant on success,
+/// or an error if the unit is not recognized.
+///
 pub fn get_enum(unit: String, unit_type: UnitType) -> Result<Unit> {
     match unit.to_lowercase().as_str() {
         "celsius" => return Ok(Unit::Celsius),
