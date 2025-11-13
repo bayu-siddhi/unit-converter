@@ -13,7 +13,7 @@ pub struct History {
 }
 
 impl History {
-    const FILE_PATH: &'static str = "data/conversion.json";
+    const FILE_PATH: &'static str = "data/history.json";
 
     pub fn load() -> Result<Self> {
         let file_path: &Path = Path::new(Self::FILE_PATH);
